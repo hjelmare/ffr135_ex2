@@ -44,9 +44,7 @@ for iOrderIt = 1:nOrderIterations
     end
     winningPoint = inputKohonenPoints(iWinningPoint,:);
     
-    for iKohonenPoint = 1:nKohonenPoints
-        
-    end
+    for
     
 end
 

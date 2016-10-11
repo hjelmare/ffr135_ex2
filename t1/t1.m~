@@ -8,9 +8,9 @@ nKohonenPoints = 100;
 nOrderIts = 1e3;
 nConvIts = 5e4;
 
-initNbhWidth = 100;
+initNbhWidth = 100; %100 but should be closer to 1 according to lecture notes
 initLearnRate = 0.1;
-tau = 200;
+tau = 200; %200
 
 convNbhWidth = 0.9;
 convLearnRate = 0.01;
@@ -39,6 +39,7 @@ kohonenPoints(:,2) = kohonenPoints(:,2) * sqrt(3/4);
 kohonenPointWeights  = zeros(nKohonenPoints,1); % Used to color points by neighbourhood function value, during debugging
 
 % % Check initalization
+% hold on
 % kohonenColors = zeros(nKohonenPoints,3);      % Linear coloring from start to end
 % kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
 % kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
@@ -104,6 +105,7 @@ end     % End of ordering phase
 scatter(randomPoints(:,1), randomPoints(:,2),1)
 axis equal
 hold on
+plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
 plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
 hold off
 
@@ -139,26 +141,27 @@ for iConvIt = 1:nConvIts
         kohonenPoints(iKohonenPoint,:) = newPos;
     end
     
-%     % Plotting to see progress, disable after debugging
-%     if mod(iConvIt,100)==0
-%         scatter(randomPoints(:,1), randomPoints(:,2),1)
-%         axis equal
-%         hold on
-%         plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
-%         plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
-%         text(0,0.2,num2str(iConvIt));
-%         hold off
-%         pause(0.0000001)
-%         %pause
-%     end
+    % Plotting to see progress, disable after debugging
+    if mod(iConvIt,100)==0
+        scatter(randomPoints(:,1), randomPoints(:,2),1)
+        axis equal
+        hold on
+        plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
+        plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
+        text(0,0.2,num2str(iConvIt));
+        hold off
+        pause(0.0000001)
+        %pause
+    end
     
 end     % End of convergence phase
 
 
-% Plot final result
+% Plot fina
 scatter(randomPoints(:,1), randomPoints(:,2),1)
 axis equal
 hold on
+plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
 plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
 hold off
 
