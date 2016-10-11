@@ -8,9 +8,9 @@ nKohonenPoints = 100;
 nOrderIts = 1e3;
 nConvIts = 5e4;
 
-initNbhWidth = 100; %100 but should be closer to 1 according to lecture notes
+initNbhWidth = 100;
 initLearnRate = 0.1;
-tau = 200; %200
+tau = 200;
 
 convNbhWidth = 0.9;
 convLearnRate = 0.01;
@@ -28,21 +28,18 @@ for i = 1:nRandomPoints
     end                             % until we get a pt below the two lines
 end
 
-% % Plot points to see that they are what we want
-% scatter(randomPoints(:,1), randomPoints(:,2))
-% axis equal
 
 % Initialize Kohonen network to vertical line at x = 0.5
 %kohonenPoints = [linspace(0.5,0.5,nKohonenPoints)',linspace(0,sqrt(3/4),nKohonenPoints)'];
 % Let's try just random positions instead - seems to work well
 kohonenPoints = rand(nKohonenPoints,2);
 kohonenPoints(:,2) = kohonenPoints(:,2) * sqrt(3/4);
-kohonenPoints = randomPoints(1:nKohonenPoints,:);
-kohonenPointWeights = zeros(nKohonenPoints,1); % For debugging purposes
+%kohonenPoints = randomPoints(1:nKohonenPoints,:);
+
+kohonenPointWeights  = zeros(nKohonenPoints,1); % Used to color points by neighbourhood function value, during debugging
 
 % % Check initalization
-% hold on
-% kohonenColors = zeros(nKohonenPoints,3);
+% kohonenColors = zeros(nKohonenPoints,3);      % Linear coloring from start to end
 % kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
 % kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
 % scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
@@ -51,6 +48,7 @@ kohonenPointWeights = zeros(nKohonenPoints,1); % For debugging purposes
 nbhWidthFunc = @(t) initNbhWidth * exp(-t/tau);
 learnRateFunc = @(t) initLearnRate * exp(-t/tau);
 
+figure(1)
 % Start ordering iterations
 for iOrderIt = 1:nOrderIts
     % Select a random point from our sample
@@ -73,9 +71,7 @@ for iOrderIt = 1:nOrderIts
         currentPos = kohonenPoints(iKohonenPoint,:);
         
         nbhWidth = nbhWidthFunc(iOrderIt);
-        nbhFunction = exp(-(norm(winningPos - currentPos))^2 / (2*nbhWidth^2)); % the way it should be according to the paper
-        nbhFunction = exp(-(500*norm(winningPos - currentPos))^2 / (2*nbhWidth^2));
-        %nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*nbhWidth^2));
+        nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*nbhWidth^2));
         
         kohonenPointWeights(iKohonenPoint) = nbhFunction;
         
@@ -87,26 +83,34 @@ for iOrderIt = 1:nOrderIts
     end
     
 
-    % Plotting to see progress, disable after debugging
-    scatter(randomPoints(:,1), randomPoints(:,2),1)
-    axis equal
-    hold on
-    plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
-    kohonenColors = zeros(nKohonenPoints,3);
-%     kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
-%     kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
-    kohonenColors(:,1) = kohonenPointWeights / max(kohonenPointWeights);    % debugging colors
-    kohonenColors(:,3) = 1 - kohonenPointWeights / max(kohonenPointWeights);
-    scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
-    text(0,0.2,num2str(iOrderIt));
-    hold off
-    pause(0.0000001)
-    %pause
+%     % Plotting to see progress, disable after debugging
+%     scatter(randomPoints(:,1), randomPoints(:,2),1)
+%     axis equal
+%     hold on
+%     plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
+%     kohonenColors = zeros(nKohonenPoints,3);
+%     kohonenColors(:,1) = kohonenPointWeights / max(kohonenPointWeights);
+%     kohonenColors(:,3) = 1 - kohonenPointWeights / max(kohonenPointWeights);
+%     scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
+%     text(0,0.2,num2str(iOrderIt));
+%     hold off
+%     %pause(0.0000001)
+%     %pause
 
     
 end     % End of ordering phase
 
+% Plotting final result
+scatter(randomPoints(:,1), randomPoints(:,2),1)
+axis equal
+hold on
+plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
+hold off
 
+saveas(gcf,'t1a.png','png')
+
+
+figure(2)
 % Start convergence iterations
 for iConvIt = 1:nConvIts
     % Select a random point from our sample
@@ -128,42 +132,34 @@ for iConvIt = 1:nConvIts
     for iKohonenPoint = 1:nKohonenPoints
         currentPos = kohonenPoints(iKohonenPoint,:);
         
-        nbhFunction = exp(-(500*norm(winningPos - currentPos))^2 / (2*convNbhWidth^2));
-        %nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*convNbhWidth^2));
-        
-        %disp([nbhFunction, -(norm(selectedPoint - currentPos))^2])
+        nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*convNbhWidth^2));
         
         newPos = currentPos + convLearnRate*nbhFunction*(selectedPoint-currentPos);
         
         kohonenPoints(iKohonenPoint,:) = newPos;
     end
     
-
-    % Plotting to see progress, disable after debugging
-    scatter(randomPoints(:,1), randomPoints(:,2),1)
-    axis equal
-    hold on
-    plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
-    kohonenColors = zeros(nKohonenPoints,3);
-    kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
-    kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
-    scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
-    text(0,0.2,num2str(iConvIt));
-    hold off
-    pause(0.0000001)
-    %pause
-
+%     % Plotting to see progress, disable after debugging
+%     if mod(iConvIt,100)==0
+%         scatter(randomPoints(:,1), randomPoints(:,2),1)
+%         axis equal
+%         hold on
+%         plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
+%         plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
+%         text(0,0.2,num2str(iConvIt));
+%         hold off
+%         pause(0.0000001)
+%         %pause
+%     end
     
 end     % End of convergence phase
 
 
-
-% Plot after final iteration
-scatter(randomPoints(:,1), randomPoints(:,2))
+% Plot final result
+scatter(randomPoints(:,1), randomPoints(:,2),1)
 axis equal
-
 hold on
-kohonenColors = zeros(nKohonenPoints,3);
-kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
-kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
-scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
+plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
+hold off
+
+saveas(gcf,'t1b.png','png')
