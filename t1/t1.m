@@ -8,7 +8,7 @@ nKohonenPoints = 100;
 nOrderIts = 1e3;
 nConvIts = 5e4;
 
-initNbhWidth = 100;
+initNbhWidth = 100; %100 but should be closer to 1 according to lecture notes
 initLearnRate = 0.1;
 tau = 200; %200
 
@@ -33,7 +33,12 @@ end
 % axis equal
 
 % Initialize Kohonen network to vertical line at x = 0.5
-kohonenPoints = [linspace(0.5,0.5,nKohonenPoints)',linspace(0,sqrt(3/4),nKohonenPoints)'];
+%kohonenPoints = [linspace(0.5,0.5,nKohonenPoints)',linspace(0,sqrt(3/4),nKohonenPoints)'];
+% Let's try just random positions instead - seems to work well
+kohonenPoints = rand(nKohonenPoints,2);
+kohonenPoints(:,2) = kohonenPoints(:,2) * sqrt(3/4);
+kohonenPoints = randomPoints(1:nKohonenPoints,:);
+kohonenPointWeights = zeros(nKohonenPoints,1); % For debugging purposes
 
 % % Check initalization
 % hold on
@@ -68,12 +73,13 @@ for iOrderIt = 1:nOrderIts
         currentPos = kohonenPoints(iKohonenPoint,:);
         
         nbhWidth = nbhWidthFunc(iOrderIt);
-        %nbhFunction = exp(-(500*norm(winningPos - currentPos))^2 / (2*nbhWidth^2));
-        nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*nbhWidth^2));
+        nbhFunction = exp(-(norm(winningPos - currentPos))^2 / (2*nbhWidth^2)); % the way it should be according to the paper
+        nbhFunction = exp(-(500*norm(winningPos - currentPos))^2 / (2*nbhWidth^2));
+        %nbhFunction = exp(-(iSmallestNorm-iKohonenPoint)^2 / (2*nbhWidth^2));
+        
+        kohonenPointWeights(iKohonenPoint) = nbhFunction;
         
         learnRate = learnRateFunc(iOrderIt);
-        
-        [learnRate, nbhWidth]
         
         newPos = currentPos + learnRate*nbhFunction*(selectedPoint-currentPos);
         
@@ -82,13 +88,15 @@ for iOrderIt = 1:nOrderIts
     
 
     % Plotting to see progress, disable after debugging
-    scatter(randomPoints(:,1), randomPoints(:,2))
+    scatter(randomPoints(:,1), randomPoints(:,2),1)
     axis equal
     hold on
     plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')
     kohonenColors = zeros(nKohonenPoints,3);
-    kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
-    kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
+%     kohonenColors(:,1) = linspace(0,1,nKohonenPoints)';
+%     kohonenColors(:,3) = linspace(1,0,nKohonenPoints)';
+    kohonenColors(:,1) = kohonenPointWeights / max(kohonenPointWeights);    % debugging colors
+    kohonenColors(:,3) = 1 - kohonenPointWeights / max(kohonenPointWeights);
     scatter(kohonenPoints(:,1),kohonenPoints(:,2),10,kohonenColors)
     text(0,0.2,num2str(iOrderIt));
     hold off
@@ -132,7 +140,7 @@ for iConvIt = 1:nConvIts
     
 
     % Plotting to see progress, disable after debugging
-    scatter(randomPoints(:,1), randomPoints(:,2))
+    scatter(randomPoints(:,1), randomPoints(:,2),1)
     axis equal
     hold on
     plot(randomPoints(iRandomPoint,1),randomPoints(iRandomPoint,2),'or')

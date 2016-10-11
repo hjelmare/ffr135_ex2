@@ -151,4 +151,5 @@ plot(randomPoints(boundaryActivation>0,1),randomPoints(boundaryActivation>0,2),'
 hold on
 plot(randomPoints(boundaryActivation<0,1),randomPoints(boundaryActivation<0,2),'ob')
 plot(points(:,2),points(:,3),'og')
+plot(nodes(:,1),nodes(:,2),'kx')
 hold off
