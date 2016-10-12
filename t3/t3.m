@@ -19,7 +19,7 @@ nMainIterations = 20;   % How many tries to get the best classification error
 activationBeta = 0.5;
 learnRate = 0.02;
 
-nNodes = 20;    % Number of "weights"
+nNodes = 5;    % Number of "weights", change between 5 and 20 for a) and b)
 
 nodes = rand(nNodes,2)*2-1;
 outputs = zeros(nNodes,1);
@@ -142,7 +142,8 @@ end
 % Use contour plot to get the decision boundary line
 contour(xTics, yTics, boundaryActivation', 'rx')
 hold on
-plot(points(:,2), points(:,3), '.b')
+plot(points(points(:,1)==1,2), points(points(:,1)==1,3), '.b')
+plot(points(points(:,1)==-1,2), points(points(:,1)==-1,3), '.k')
 plot(nodes(:,1), nodes(:,2), 'r.', 'MarkerSize', 20)
 hold off
 

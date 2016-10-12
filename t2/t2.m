@@ -138,14 +138,14 @@ end
 clf
 clc
 
-for iPlot = 1:400;
+for iPlot = 1:nKohonenPoints;
     switch outputColors(iPlot)
         case 1
-            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'ro');
+            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'r.');
         case 2
             plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'go');
         case 3
-            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'bo');
+            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'bx');
     end    
     hold on
 end

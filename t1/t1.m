@@ -8,7 +8,7 @@ nKohonenPoints = 100;
 nOrderIts = 1e3;
 nConvIts = 5e4;
 
-initNbhWidth = 100;
+initNbhWidth = 100;     % Change between 100 and 5 for a) and b)
 initLearnRate = 0.1;
 tau = 200;
 
@@ -110,7 +110,8 @@ plot(plotLine(:,1),plotLine(:,2),'-k');
 axis([0 1 0 1])
 hold off
 
-saveas(gcf,'t1a.png','png')
+filename =  ['t1' num2str(initNbhWidth) 'o.png'];
+saveas(gcf,filename,'png')
 
 
 figure(2)
@@ -167,4 +168,5 @@ plot(plotLine(:,1),plotLine(:,2),'-k');
 axis([0 1 0 1])
 hold off
 
-saveas(gcf,'t1b.png','png')
+filename =  ['t1' num2str(initNbhWidth) 'c.png'];
+saveas(gcf,filename,'png')
