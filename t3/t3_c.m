@@ -15,10 +15,12 @@ nBoundaryPoints = 5e2;  % Gives resolution for decision boundary plot
 nIterations = 1e5;      % Iterations to move the weights around
 nTrainingIterations = 3e3;  % Iterations to train the classification
 nMainIterations = 20;   % How many tries to get the best classification error
+nNodes = 1:20;          % List of all numbers of nodes to check
 
 activationBeta = 0.5;
 learnRate = 0.02;
 
+% Loop starts here
 nNodes = 20;    % Number of "weights"
 
 nodes = rand(nNodes,2)*2-1;
@@ -106,45 +108,9 @@ for iMainIteration = 1:nMainIterations
     end
 end
 
-% Start preparing plotting of decision boundary
 
-xMin = min(points(:,2));
-xMax = max(points(:,2));
-yMin = min(points(:,3));
-yMax = max(points(:,3));
+% Loop ends here
 
-% Generate ticks that span the input data
-xTics = linspace(xMin, xMax, nBoundaryPoints);
-yTics = linspace(yMin, yMax, nBoundaryPoints);
-
-boundaryActivation = zeros(nBoundaryPoints);
-
-threshold = bestThreshold;
-weights = bestWeights;
-
-% For all ticks, find activation
-for iX = 1:nBoundaryPoints
-    for iY = 1:nBoundaryPoints
-        selectedPos = [xTics(iX), yTics(iY)];
-
-        denominator = 0;
-        for iNode = 1:nNodes
-            outputs(iNode) = exp(-norm(selectedPos - nodes(iNode,:))^2/2);
-            denominator = denominator + outputs(iNode);
-        end
-        outputs = outputs / denominator;
-
-        activation = tanh(activationBeta*weights'*outputs + threshold);
-        boundaryActivation(iX, iY) = sign(activation);
-    end
-end
-
-% Use contour plot to get the decision boundary line
-contour(xTics, yTics, boundaryActivation', 'rx')
-hold on
-plot(points(:,2), points(:,3), '.b')
-plot(nodes(:,1), nodes(:,2), 'r.', 'MarkerSize', 20)
-hold off
-
+% Gather data and plot
 filename = ['t3_' num2str(nNodes) '.png'];
 saveas(gcf, filename,'png')

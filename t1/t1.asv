@@ -19,7 +19,7 @@ convLearnRate = 0.01;
 
 leftLine = @(x) sqrt(3)*x;
 rightLine = @(x) sqrt(3)*(1-x);
-plotLine = [0, 0 ; 0.5, sqrt(3/4) ; 1, 0 ];
+plotLine = [0, 0 ; 0.5, sqrt(3/4) ; 1, 0];
 
 randomPoints = zeros(nRandomPoints,2);
 
@@ -106,8 +106,6 @@ scatter(randomPoints(:,1), randomPoints(:,2),1)
 axis equal
 hold on
 plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
-plot(plotLine(:,1),plotLine(:,2),'-k');
-axis([0 1 0 1])
 hold off
 
 saveas(gcf,'t1a.png','png')
@@ -163,8 +161,6 @@ scatter(randomPoints(:,1), randomPoints(:,2),1)
 axis equal
 hold on
 plot(kohonenPoints(:,1),kohonenPoints(:,2),'-or')
-plot(plotLine(:,1),plotLine(:,2),'-k');
-axis([0 1 0 1])
 hold off
 
 saveas(gcf,'t1b.png','png')

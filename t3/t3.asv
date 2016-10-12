@@ -96,7 +96,7 @@ for iMainIteration = 1:nMainIterations
         % Accumulate correctly classified points...
         classificationError = classificationError + sign(activation)*validationSet(iRandomPoint,1);
     end
-    % ... and when we're done, normalize and count the misclassified ones instead
+    % ... and when we're done, 
     classificationError = (nValidationPoints - classificationError) / nValidationPoints;
     
     if classificationError < bestClassificationError

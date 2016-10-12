@@ -1,4 +1,5 @@
 clear all
+close all
 clc
 
 % Set some basic parameters
@@ -42,9 +43,6 @@ for iX = 1:nKohonenPointsX
     end
 end
 
-figure(1)
-hist(inputCoords(:,1))
-
 % Start ordering phase
 for iOrderIt = 1:nOrderIterations
     iRandom = ceil(rand()*nInputPoints);
@@ -74,9 +72,6 @@ for iOrderIt = 1:nOrderIterations
     end
 end
 
-figure(2)
-hist(inputCoords(:,1))
-
 % Start convergence phase
 for iConvIt = 1:nConvergenceIterations
     iRandom = ceil(rand()*nInputPoints);
@@ -103,11 +98,26 @@ for iConvIt = 1:nConvergenceIterations
     end
 end
 
-figure(3)
-hist(inputCoords(:,1))
-%%
-% Second phase
 
+% % % Second phase the more intuitive way
+% % 
+% % outputColors = zeros(nKohonenPoints,1);
+% % 
+% % for iKohonenPoint = 1:nKohonenPoints
+% %     smallestNorm = inf;
+% %     for iWine = 1:length(inputData)
+% %         currentNorm = norm(inputData(iWine,:) - inputCoords(iKohonenPoint,:));
+% %         if currentNorm < smallestNorm
+% %             smallestNorm = currentNorm;
+% %             iWinningWine = iWine;
+% %         end
+% %     end
+% %         
+% %     outputColors(iKohonenPoint) = tmpData(iWinningWine,1);    
+% % end
+
+% Second phase - the way it is described
+    
 outputColors = zeros(nKohonenPoints,1);
 
 for iWine = 1:length(inputData)
@@ -122,42 +132,24 @@ for iWine = 1:length(inputData)
         end
     end
         
-    outputColors(iWinningPoint) = tmpData(iWine,1);    
-end
-%%
-% Second phase the other way
-
-outputColors = zeros(nKohonenPoints,1);
-
-for iKohonenPoint = 1:nKohonenPoints
-    smallestNorm = inf;
-    for iWine = 1:length(inputData)
-        currentNorm = norm(inputData(iWine,:) - inputCoords(iKohonenPoint,:));
-        if currentNorm < smallestNorm
-            smallestNorm = currentNorm;
-            iWinningWine = iWine;
-        end
-    end
-        
-    outputColors(iKohonenPoint) = tmpData(iWinningWine,1);    
+    outputColors(iWinningPoint) = tmpData(iWine,1);
 end
 
-
-%%
-close all
 clf
 clc
 
-
-for i = 1:400;
-    switch outputColors(i)
+for iPlot = 1:400;
+    switch outputColors(iPlot)
         case 1
-            plot(outputCoords(i,1),outputCoords(i,2),'ro');
+            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'ro');
         case 2
-            plot(outputCoords(i,1),outputCoords(i,2),'go');
+            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'go');
         case 3
-            plot(outputCoords(i,1),outputCoords(i,2),'bo');
+            plot(outputCoords(iPlot,1),outputCoords(iPlot,2),'bo');
     end    
     hold on
 end
+axis([0 21 0 21])
 hold off
+
+saveas(gcf,'t2.png','png')
